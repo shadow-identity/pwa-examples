@@ -1,7 +1,7 @@
 self.importScripts('data/games.js');
 
 // Files to cache
-const cacheName = 'js13kPWA-v1';
+const cacheName = 'js13kPWA-v2';
 const appShellFiles = [
   '/pwa-examples/js13kpwa/',
   '/pwa-examples/js13kpwa/index.html',
@@ -36,6 +36,15 @@ self.addEventListener('install', (e) => {
     console.log('[Service Worker] Caching all: app shell and content');
     await cache.addAll(contentToCache);
   })());
+});
+
+self.addEventListener('activate', (e) => {
+  e.waitUntil(caches.keys().then((keyList) => {
+    return Promise.all(keyList.map((key) => {
+      if (key === cacheName) { return; }
+      return caches.delete(key);
+    }))
+  }));
 });
 
 // Fetching content using Service Worker
